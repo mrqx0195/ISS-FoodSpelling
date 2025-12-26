@@ -1,0 +1,12 @@
+{
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "mixins": [
+    "MixinArcaneAnvilMenu",
+    "MixinIssUtils"
+  ],
+  "package": "net.mrqx.ironsspellbooks.foodspelling.mixin",
+  "required": true,
+  "client": [
+  ]
+}
