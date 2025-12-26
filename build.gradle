@@ -1,8 +1,8 @@
 plugins {
-    id 'idea'
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.moddev.legacyforge' version '2.0.91'
+    id 'net.neoforged.moddev' version '2.0.107'
+    id 'idea'
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -51,8 +51,8 @@ base {
     archivesName = "${mod_file_name}-${minecraft_version}"
 }
 
-legacyForge {
-    version = project.minecraft_version + '-' + project.forge_version
+neoForge {
+    version = project.neo_version
 
     parchment {
         mappingsVersion = project.parchment_mappings_version
@@ -63,20 +63,20 @@ legacyForge {
         client {
             client()
             gameDirectory = project.file('run/client')
-            systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         server {
             server()
             gameDirectory = project.file('run/server')
             programArgument '--nogui'
-            systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         gameTestServer {
             type = "gameTestServer"
             gameDirectory = project.file('run/gametest')
-            systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         data {
@@ -88,9 +88,6 @@ legacyForge {
         configureEach {
             systemProperty 'forge.logging.markers', 'REGISTRIES'
             logLevel = org.slf4j.event.Level.DEBUG
-
-            systemProperty 'forge.logging.console.level', 'debug'
-            systemProperty 'mixin.debug.export', 'true'
         }
     }
 
@@ -106,41 +103,22 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
-obfuscation {
-    createRemappingConfiguration(configurations.localRuntime)
-}
 
 dependencies {
-    modImplementation "maven.modrinth:irons-spells-n-spellbooks:${iss_version}"
-    modImplementation "maven.modrinth:playeranimator:1.0.2-rc1+1.20-forge"
-    modImplementation "maven.modrinth:curios:5.14.1+1.20.1"
-    modImplementation "maven.modrinth:geckolib:aVW7Z5da"
-    modImplementation "maven.modrinth:caelus:3.2.0+1.20.1"
+    implementation "maven.modrinth:irons-spells-n-spellbooks:${iss_version}"
+    implementation "maven.modrinth:playeranimator:2.0.1+1.21.1-forge"
+    implementation "maven.modrinth:curios:9.5.1+1.21.1"
+    implementation "maven.modrinth:geckolib:RVIo5f6E"
+    implementation "maven.modrinth:caelus:KsfI4QsR"
 
     implementation "org.jetbrains:annotations:17.0.0"
-}
-
-mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
-    config "${mod_id}.mixins.json"
-}
-
-dependencies {
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-}
-
-jar {
-    manifest.attributes([
-            "MixinConfigs": "${mod_id}.mixins.json"
-    ])
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [
             minecraft_version      : minecraft_version,
             minecraft_version_range: minecraft_version_range,
-            forge_version          : forge_version,
-            forge_version_range    : forge_version_range,
+            neo_version            : neo_version,
             loader_version_range   : loader_version_range,
             mod_id                 : mod_id,
             mod_name               : mod_name,
@@ -158,7 +136,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 }
 
 sourceSets.main.resources.srcDir generateModMetadata
-legacyForge.ideSyncTask generateModMetadata
+neoForge.ideSyncTask generateModMetadata
 
 publishing {
     publications {

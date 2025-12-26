@@ -7,18 +7,19 @@ import io.redspace.ironsspellbooks.api.spells.CastSource;
 import io.redspace.ironsspellbooks.api.spells.ISpellContainer;
 import io.redspace.ironsspellbooks.api.spells.SpellData;
 import io.redspace.ironsspellbooks.player.ClientMagicData;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class FoodEventHandler {
     @SubscribeEvent
     public static void onLivingEntityUseItemEventFinish(LivingEntityUseItemEvent.Finish event) {
         ItemStack item = event.getItem();
-        if (item.isEdible() && event.getEntity() instanceof Player player) {
+        if (item.get(DataComponents.FOOD) != null && event.getEntity() instanceof Player player) {
             ISpellContainer spellContainer = ISpellContainer.getOrCreate(item);
             SpellData scrollSlot = spellContainer.getSpellAtIndex(0);
             AbstractSpell spell = scrollSlot.getSpell();
