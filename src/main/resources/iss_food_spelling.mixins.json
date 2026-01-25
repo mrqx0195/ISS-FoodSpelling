@@ -6,6 +6,7 @@
     "MixinIssUtils"
   ],
   "package": "net.mrqx.ironsspellbooks.foodspelling.mixin",
+  "refmap": "iss_food_spelling.refmap.json",
   "required": true,
   "client": [
   ]
